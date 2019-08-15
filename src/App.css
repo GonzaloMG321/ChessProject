@@ -1,0 +1,83 @@
+.contenedor{
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    flex-direction: column;  
+}
+
+.elemento{
+    color: #fff;
+    background: #2196f3;
+}
+
+#root{
+    height: 100%;
+    width: 100%;
+}
+
+.contenedor-principal{
+    padding: 30px;
+}
+
+.button-choose{
+    color: white;
+    height: 35px;
+    margin: 5px;
+    background: blueviolet;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.button-choose:hover{
+   background: #c07cff;
+}
+
+.tablero{
+    border-radius: 30px;
+    border: 13px solid #000000;
+    margin-bottom: 15px;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    
+    flex-direction: column;
+    /* flex-direction: column-reverse; */
+}
+
+.fila{
+    height: 80px;
+
+    display: flex;
+    flex: wrap;
+}
+
+.casilla{
+    width: 80px;
+    font-size: 60px;
+    text-align: center;
+    color: white;
+    border: solid 1px black;
+    display: flex;
+}
+
+.negras{
+    background-image: url(./tablero/casilla-negra.PNG);
+}
+
+.blancas{
+    background-image: url(./tablero/casilla-blanca.PNG);
+}
+
+.seleccionado{
+    background: #10ff0082;
+    width: 80px;
+}
+
+.nodisponible{
+    background: #ff000096;
+    width: 80px;
+}
