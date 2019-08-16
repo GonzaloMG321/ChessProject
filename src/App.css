@@ -41,6 +41,7 @@
     border-radius: 30px;
     border: 13px solid #000000;
     margin-bottom: 15px;
+    margin-right: 15px;
     display: inline-flex;
     flex-wrap: nowrap;
     
@@ -80,4 +81,29 @@
 .nodisponible{
     background: #ff000096;
     width: 80px;
+}
+
+
+/*Estilo de las 8 reynas*/
+.contenedor-ocho-reynas{
+    display: flex;
+
+    flex-direction: row;
+    flex-wrap: nowrap;
+}
+
+.seccion-piezas{
+    border: solid 5px;
+    margin-bottom: 15px;
+    display: flex;
+    
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.pieza-reyna{
+    font-size: 50px;
+    width: 100px;
+    text-align: center;
 }
