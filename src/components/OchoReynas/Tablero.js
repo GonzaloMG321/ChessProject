@@ -51,6 +51,8 @@ function Tablero(props) {
         default:
           break;
       }
+    }else{
+       console.log(coordenadasReynas);
     }
   };
 
