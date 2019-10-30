@@ -12,6 +12,7 @@ function OchoReynas(){
     const [reynaSeis, setReynaSeis] = useState({isDraggable: INITIAL_DRAGGABLE, reynaUnicode: REYNA_UNICODE});
     const [reynaSiete, setReynaSiete] = useState({isDraggable: INITIAL_DRAGGABLE, reynaUnicode: REYNA_UNICODE});
     const [reynaOcho, setReynaOcho] = useState({isDraggable: INITIAL_DRAGGABLE, reynaUnicode: REYNA_UNICODE});
+    const [dragTerminado, setDragTerminado] = useState(false);
     const setReynas = {
         setReynaUno, setReynaDos, setReynaTres, setReynaCuatro, setReynaCinco, setReynaSeis, setReynaSiete, setReynaOcho
     }
@@ -19,36 +20,40 @@ function OchoReynas(){
         ev.dataTransfer.setData("setReyna", reyna);
     }
     
+    const dragEnd = ev => {
+       setDragTerminado(true);
+    }
+
     return(
         <div className="contenedor-ocho-reynas">
             <div className="tablero">
-                <Tablero setReynas={setReynas} ></Tablero>
+                <Tablero setReynas={setReynas} dragTerminado={dragTerminado} setDragTerminado={setDragTerminado} ></Tablero>
             </div>
             <div className="seccion-piezas">
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaUno");
-                }} draggable={reynaUno.isDraggable} className={"pieza-reyna " + (reynaUno.isDraggable ? "cursor-pointer": "")} >{reynaUno.reynaUnicode}</div>
+                    arrastrar(e, 0);
+                }} onDragEnd={dragEnd} draggable={reynaUno.isDraggable} className={"pieza-reyna " + (reynaUno.isDraggable ? "cursor-pointer": "")} >{reynaUno.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaDos");
-                }} draggable={reynaDos.isDraggable} className={"pieza-reyna " + (reynaDos.isDraggable ? "cursor-pointer": "")}>{reynaDos.reynaUnicode}</div>
+                    arrastrar(e, 1);
+                }} onDragEnd={dragEnd} draggable={reynaDos.isDraggable} className={"pieza-reyna " + (reynaDos.isDraggable ? "cursor-pointer": "")}>{reynaDos.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaTres");
-                }} draggable={reynaTres.isDraggable} className={"pieza-reyna " + (reynaTres.isDraggable ? "cursor-pointer": "")}>{reynaTres.reynaUnicode}</div>
+                    arrastrar(e, 2);
+                }} onDragEnd={dragEnd} draggable={reynaTres.isDraggable} className={"pieza-reyna " + (reynaTres.isDraggable ? "cursor-pointer": "")}>{reynaTres.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaCuatro");
-                }} draggable={reynaCuatro.isDraggable} className={"pieza-reyna " + (reynaCuatro.isDraggable ? "cursor-pointer": "")}>{reynaCuatro.reynaUnicode}</div>
+                    arrastrar(e, 3);
+                }} onDragEnd={dragEnd} draggable={reynaCuatro.isDraggable} className={"pieza-reyna " + (reynaCuatro.isDraggable ? "cursor-pointer": "")}>{reynaCuatro.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaCinco");
-                }} draggable={reynaCinco.isDraggable} className={"pieza-reyna " + (reynaCinco.isDraggable ? "cursor-pointer": "")}>{reynaCinco.reynaUnicode}</div>
+                    arrastrar(e, 4);
+                }} onDragEnd={dragEnd} draggable={reynaCinco.isDraggable} className={"pieza-reyna " + (reynaCinco.isDraggable ? "cursor-pointer": "")}>{reynaCinco.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaSeis");
-                }} draggable={reynaSeis.isDraggable} className={"pieza-reyna " + (reynaSeis.isDraggable ? "cursor-pointer": "")}>{reynaSeis.reynaUnicode}</div>
+                    arrastrar(e, 5);
+                }} onDragEnd={dragEnd} draggable={reynaSeis.isDraggable} className={"pieza-reyna " + (reynaSeis.isDraggable ? "cursor-pointer": "")}>{reynaSeis.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaSiete");
-                }} draggable={reynaSiete.isDraggable} className={"pieza-reyna " + (reynaSiete.isDraggable ? "cursor-pointer": "")}>{reynaSiete.reynaUnicode}</div>
+                    arrastrar(e, 6);
+                }} onDragEnd={dragEnd} draggable={reynaSiete.isDraggable} className={"pieza-reyna " + (reynaSiete.isDraggable ? "cursor-pointer": "")}>{reynaSiete.reynaUnicode}</div>
                 <div onDragStart={(e) => {
-                    arrastrar(e, "reynaOcho");
-                }} draggable={reynaOcho.isDraggable} className={"pieza-reyna " + (reynaOcho.isDraggable ? "cursor-pointer": "")}>{reynaOcho.reynaUnicode}</div>
+                    arrastrar(e, 7);
+                }} onDragEnd={dragEnd} draggable={reynaOcho.isDraggable} className={"pieza-reyna " + (reynaOcho.isDraggable ? "cursor-pointer": "")}>{reynaOcho.reynaUnicode}</div>
             </div>
         </div>
     )

@@ -1,17 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Herramientas from "./Herramientas";
+import classnames from 'classnames'
 
 function Tablero(props) {
   const [numeroReynas, setNumeroReynas] = useState(0);
   const [coordenadasReynas, setCoordenadasReynas] = useState([]);
+  const [coordenadasAtaque, setCoordenadasAtaque] = useState([]);
+  const [coordenadaPrevia, setCoordenadaPrevia] = useState([0, 0]);
+  const [queen, setQueen] = useState(null);
+  const { dragTerminado } = props;
+  const functionSetDragTeminado = props.setDragTerminado;
   const tablero = [];
 
-  const allowDrop = ev => {
+  useEffect(() => {
+    let img = new Image();
+    img.src = require("../../tablero/queen.png");
+    img.onload = () => setQueen(img);
+  }, [])
+  const allowDrop = (ev, x, y) => {
     ev.preventDefault();
+    setCoordenadasAtaque(Herramientas.calcularAtaques(x, y));
   };
 
   const drop = (ev, x, y) => {
     ev.preventDefault();
-    if (numeroReynas < 8) {
+    if(ev.dataTransfer.getData("arrastreEstablecido")){
+      const numeroReyna = ev.dataTransfer.getData("numeroReyna");
+      let coordenadasReynasActualizadas = Herramientas.actualizarUbicacionReyna(x, y, parseInt(numeroReyna), coordenadasReynas);
+      setCoordenadasReynas(coordenadasReynasActualizadas);
+      setCoordenadasAtaque([]);
+      setCoordenadaPrevia([]);
+    }else if (numeroReynas < 8) {
       setNumeroReynas(numeroReynas + 1);
       let posicionReyna = {
         numero: numeroReynas,
@@ -23,34 +42,7 @@ function Tablero(props) {
       setCoordenadasReynas(anteriores);
       let nuevo = { isDraggable: false, reynaUnicode: "" };
       const reyna = ev.dataTransfer.getData("setReyna");
-      switch (reyna) {
-        case "reynaUno":
-          props.setReynas.setReynaUno(nuevo);
-          break;
-        case "reynaDos":
-          props.setReynas.setReynaDos(nuevo);
-          break;
-        case "reynaTres":
-          props.setReynas.setReynaTres(nuevo);
-          break;
-        case "reynaCuatro":
-          props.setReynas.setReynaCuatro(nuevo);
-          break;
-        case "reynaCinco":
-          props.setReynas.setReynaCinco(nuevo);
-          break;
-        case "reynaSeis":
-          props.setReynas.setReynaSeis(nuevo);
-          break;
-        case "reynaSiete":
-          props.setReynas.setReynaSiete(nuevo);
-          break;
-        case "reynaOcho":
-          props.setReynas.setReynaOcho(nuevo);
-          break;
-        default:
-          break;
-      }
+      Herramientas.removerReyna(reyna, props,nuevo);
     }else{
        console.log(coordenadasReynas);
     }
@@ -66,21 +58,58 @@ function Tablero(props) {
     return isHere;
   };
 
+  const obtenerNumeroReyna = (x, y ) =>{
+    let numero = 0;
+    coordenadasReynas.forEach(reyna => {
+      if(reyna.coordenada_x === x && reyna.coordenada_y === y){
+        numero = reyna.numero;
+      }
+    })
+    return numero;
+  }
+
   for (var i = 7; i >= 0; i--) {
     let fila = [];
     for (var j = 0; j < 8; j++) {
       let x = j + 1;
       let y = i + 1;
       let existeReyna = checkIfQuenIsHere(x, y);
+      let numeroReyna = obtenerNumeroReyna(x, y);
+      let disponibleAtaque = Herramientas.verificarSiDisponibleAtaque(x, y, coordenadasAtaque);
       fila.push(
         <div
-          key={`${i}${j}`} onDragOver={allowDrop} onDrop={e => {
+          key={`${i}${j}`} onDragOver={(e) => { 
+            if(!existeReyna || (coordenadaPrevia[0] === x && coordenadaPrevia[1])){
+              allowDrop(e, x, y);
+            }
+          }} onDrop={e => {
             drop(e, x, y);
           }}
-          className={
-            "casilla " + (i % 2 === 0 ? j % 2 === 0 ? "negras ": "blancas ": j % 2 !== 0 ? "negras ": "blancas ")
+          className={classnames("casilla " + (i % 2 === 0 ? j % 2 === 0 ? "negras": "blancas": j % 2 !== 0 ? "negras": "blancas"), {
+          })
           }>
-          <div draggable={existeReyna} className={existeReyna ? "casilla-ocupado": ""}>{existeReyna ? "\u2655" : ""}</div>
+          {
+            (coordenadaPrevia[0] === x && coordenadaPrevia[1] === y && disponibleAtaque) || (disponibleAtaque && !existeReyna)?
+              <div className="casilla-contenedor">
+                <div className="casilla-atacado-disponible casilla-disponible"></div>
+              </div>
+            : existeReyna && (coordenadaPrevia[0] !== x || coordenadaPrevia[1] !== y) ? 
+            <div draggable={true} onDragStart={(e)=>{
+                e.dataTransfer.setData("arrastreEstablecido", true);
+                e.dataTransfer.setData("numeroReyna", numeroReyna);
+                e.dataTransfer.setDragImage(queen, 0, 0);
+                setCoordenadaPrevia([x, y]);
+                //let nuevo = Herramientas.removerCoordenada(x, y, coordenadasReynas);
+                //setCoordenadasReynas(nuevo);
+            }} onDragEnd={()=>{
+              setCoordenadasAtaque([]);
+              setCoordenadaPrevia([0, 0]);
+            }} className={classnames("", {
+              "casilla-ocupado": true,
+              "casilla-atacado": existeReyna && disponibleAtaque
+            })}>{existeReyna ? "\u2655" : ""}</div>:
+              existeReyna ? <div draggable={true} className="casilla-contenedor"></div> :null
+          }
         </div>
       );
     }
@@ -90,6 +119,13 @@ function Tablero(props) {
       </div>
     );
   }
+
+  useEffect(() => {
+    if(dragTerminado){
+      setCoordenadasAtaque([]);
+      functionSetDragTeminado(false);
+    }
+  }, [dragTerminado, functionSetDragTeminado])
   return <React.Fragment>{tablero}</React.Fragment>;
 }
 

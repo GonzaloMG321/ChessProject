@@ -118,5 +118,32 @@
     height: 100%;
     text-align: center;
     cursor: pointer;
-    
+}
+
+.casilla-contenedor{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+}
+
+.casilla-atacado-disponible{
+    width: 60%;
+    height: 60%;
+    border-radius: 23px;
+}
+
+.casilla-atacado{
+    background: red;
+}
+
+.casilla-disponible{
+    background: #3fe23f;
+}
+
+
+
+.casilla-ataque{
+    background: green;
 }

@@ -137,14 +137,16 @@ function Tablero(props) {
         tablero.push(<div key={`${i}`} className="fila">{fila}</div>);
     }
 
+    const { reinicio } = props;
+    const funcionReiniciar = props.setReiniciarJuego;
     useEffect(() => {
-        if(props.reinicio){
+        if(reinicio){
             setCoordenadas([0, 0]);
             setCoordenadasDisponibles([]);
             setCasillaOcupada([])
-            props.setReiniciarJuego(false);
+            funcionReiniciar(false);
         }
-    }, [props.reinicio])
+    }, [reinicio, funcionReiniciar])
 
     return (
         <React.Fragment>
