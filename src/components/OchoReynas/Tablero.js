@@ -19,17 +19,17 @@ function Tablero(props) {
   }, [])
   const allowDrop = (ev, x, y) => {
     ev.preventDefault();
-    setCoordenadasAtaque(Herramientas.calcularAtaques(x, y));
+    setCoordenadasAtaque(Herramientas.calcularAtaques(x, y, coordenadasReynas));
   };
 
   const drop = (ev, x, y) => {
-    ev.preventDefault();
+    ev.preventDefault(); 
     if(ev.dataTransfer.getData("arrastreEstablecido")){
       const numeroReyna = ev.dataTransfer.getData("numeroReyna");
       let coordenadasReynasActualizadas = Herramientas.actualizarUbicacionReyna(x, y, parseInt(numeroReyna), coordenadasReynas);
       setCoordenadasReynas(coordenadasReynasActualizadas);
       setCoordenadasAtaque([]);
-      setCoordenadaPrevia([]);
+      setCoordenadaPrevia([0, 0]);
     }else if (numeroReynas < 8) {
       setNumeroReynas(numeroReynas + 1);
       let posicionReyna = {
@@ -68,6 +68,11 @@ function Tablero(props) {
     return numero;
   }
 
+  const setearValores = () => {
+    setCoordenadaPrevia([0, 0]); 
+    setCoordenadasAtaque([]);
+  }
+
   for (var i = 7; i >= 0; i--) {
     let fila = [];
     for (var j = 0; j < 8; j++) {
@@ -81,6 +86,8 @@ function Tablero(props) {
           key={`${i}${j}`} onDragOver={(e) => { 
             if(!existeReyna || (coordenadaPrevia[0] === x && coordenadaPrevia[1])){
               allowDrop(e, x, y);
+            }else{
+              setCoordenadasAtaque([]);
             }
           }} onDrop={e => {
             drop(e, x, y);
@@ -90,7 +97,9 @@ function Tablero(props) {
           }>
           {
             (coordenadaPrevia[0] === x && coordenadaPrevia[1] === y && disponibleAtaque) || (disponibleAtaque && !existeReyna)?
-              <div className="casilla-contenedor">
+              <div onDragEnd={() => {
+                setearValores();
+              }}className="casilla-contenedor">
                 <div className="casilla-atacado-disponible casilla-disponible"></div>
               </div>
             : existeReyna && (coordenadaPrevia[0] !== x || coordenadaPrevia[1] !== y) ? 
@@ -99,16 +108,15 @@ function Tablero(props) {
                 e.dataTransfer.setData("numeroReyna", numeroReyna);
                 e.dataTransfer.setDragImage(queen, 0, 0);
                 setCoordenadaPrevia([x, y]);
-                //let nuevo = Herramientas.removerCoordenada(x, y, coordenadasReynas);
-                //setCoordenadasReynas(nuevo);
             }} onDragEnd={()=>{
-              setCoordenadasAtaque([]);
-              setCoordenadaPrevia([0, 0]);
+              setearValores();
             }} className={classnames("", {
               "casilla-ocupado": true,
               "casilla-atacado": existeReyna && disponibleAtaque
             })}>{existeReyna ? "\u2655" : ""}</div>:
-              existeReyna ? <div draggable={true} className="casilla-contenedor"></div> :null
+              existeReyna ? <div draggable={true} onDragEnd={() =>{
+                setearValores();
+              }} className="casilla-contenedor"></div> :null
           }
         </div>
       );

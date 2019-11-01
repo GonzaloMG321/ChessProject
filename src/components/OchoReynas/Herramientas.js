@@ -1,6 +1,57 @@
 class Herramientas{
-    calcularAtaques(x, y){
+    calcularAtaques(x, y, arrayReynasTablero){
         let array = [];
+        let i = x - 1;
+        let coincide = false;
+        while(i > 0 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === i && aux.coordenada_y === y){
+              coincide = true;
+            }
+          }
+          array.push([i, y])
+          i--;
+        };
+        coincide = false;
+        i = x + 1;
+        while(i <= 8 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === i && aux.coordenada_y === y){
+              coincide = true;
+            }
+          }
+          array.push([i, y])
+          i++;
+        };
+
+        coincide = false;
+        i = y - 1; 
+        while(i > 0 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === x && aux.coordenada_y === i){
+              coincide = true;
+            }
+          }
+          array.push([x, i])
+          i--;
+        };
+
+        coincide = false;
+        i = y + 1;
+        while(i <= 8 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === x && aux.coordenada_y === i){
+              coincide = true;
+            }
+          }
+          array.push([x, i])
+          i++;
+        };
+        /*
         for(let i = x; i > 0; i--){
             array.push([i, y]);
         }
@@ -18,6 +69,7 @@ class Herramientas{
             console.log(i, j)
             array.push(i, j)
         }*/
+        
         return array;
     }
 
@@ -71,14 +123,6 @@ class Herramientas{
              return reyna;
          });
          return nuevo;
-    }
-
-    removerCoordenada(x, y, coordenadas){
-        let aux = coordenadas.filter((reyna) =>{
-            return reyna.coordenada_x !== x || reyna.coordenada_y !== y
-        });
-
-        return aux;
     }
 }
 
