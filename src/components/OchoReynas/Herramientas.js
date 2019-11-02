@@ -1,13 +1,17 @@
 class Herramientas{
-    calcularAtaques(x, y, arrayReynasTablero){
+    calcularAtaques(x, y, arrayReynasTablero, coordenadaReynaArraste){
         let array = [];
+        array.push([x, y]);
         let i = x - 1;
         let coincide = false;
+        let existeAtaque = false;
         while(i > 0 && !coincide){
           for(let j = 0; j < arrayReynasTablero.length; j++){
             let aux = arrayReynasTablero[j];
-            if(aux.coordenada_x === i && aux.coordenada_y === y){
+            if(aux.coordenada_x === i && aux.coordenada_y === y && (coordenadaReynaArraste[0] !== i || coordenadaReynaArraste[1] !== y)){
               coincide = true;
+              existeAtaque = true;
+              break;
             }
           }
           array.push([i, y])
@@ -18,8 +22,10 @@ class Herramientas{
         while(i <= 8 && !coincide){
           for(let j = 0; j < arrayReynasTablero.length; j++){
             let aux = arrayReynasTablero[j];
-            if(aux.coordenada_x === i && aux.coordenada_y === y){
+            if(aux.coordenada_x === i && aux.coordenada_y === y && (coordenadaReynaArraste[0] !== i || coordenadaReynaArraste[1] !== y)){
               coincide = true;
+              existeAtaque = true;
+              break;
             }
           }
           array.push([i, y])
@@ -31,8 +37,10 @@ class Herramientas{
         while(i > 0 && !coincide){
           for(let j = 0; j < arrayReynasTablero.length; j++){
             let aux = arrayReynasTablero[j];
-            if(aux.coordenada_x === x && aux.coordenada_y === i){
+            if(aux.coordenada_x === x && aux.coordenada_y === i && (coordenadaReynaArraste[0] !== x || coordenadaReynaArraste[1] !== i)){
               coincide = true;
+              existeAtaque = true;
+              break;
             }
           }
           array.push([x, i])
@@ -44,33 +52,89 @@ class Herramientas{
         while(i <= 8 && !coincide){
           for(let j = 0; j < arrayReynasTablero.length; j++){
             let aux = arrayReynasTablero[j];
-            if(aux.coordenada_x === x && aux.coordenada_y === i){
+            if(aux.coordenada_x === x && aux.coordenada_y === i && (coordenadaReynaArraste[0] !== x || coordenadaReynaArraste[1] !== i)){
               coincide = true;
+              existeAtaque = true;
+              break
             }
           }
           array.push([x, i])
           i++;
         };
-        /*
-        for(let i = x; i > 0; i--){
-            array.push([i, y]);
-        }
-        for(let i = x; i <=8 ; i++){
-            array.push([i, y]);
-        }
-        for(let i = y; i > 0 ; i--){
-            array.push([x, i]);
-        }
-        for(let i = y; i <=8 ; i++){
-            array.push([x, i]);
-        }
-        /*
-        for(let i = x, j = y; i <= 8 && j <= 8; i++, j++){
-            console.log(i, j)
-            array.push(i, j)
-        }*/
         
-        return array;
+        i = x - 1;
+        let yy = y + 1;
+        coincide = false;
+        while(i > 0 && yy <= 8 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === i && aux.coordenada_y === yy && (coordenadaReynaArraste[0] !== i || coordenadaReynaArraste[1] !== yy)){
+              coincide = true;
+              existeAtaque = true;
+              break
+            }
+          }
+          array.push([i, yy]);
+          i--;
+          yy++;
+        }
+
+        i = x + 1;
+        yy = y + 1;
+        coincide = false;
+        while(i <= 8 && yy <=8 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === i && aux.coordenada_y === yy && (coordenadaReynaArraste[0] !== i || coordenadaReynaArraste[1] !== yy)){
+              coincide = true;
+              existeAtaque = true;
+              break
+            }
+          }
+          array.push([i, yy]);
+          i++;
+          yy++;
+        }
+
+        i = x + 1;
+        yy = y - 1;
+        coincide = false;
+        while(i <=8 && yy > 0 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === i && aux.coordenada_y === yy && (coordenadaReynaArraste[0] !== i || coordenadaReynaArraste[1] !== yy)){
+              coincide = true;
+              existeAtaque = true;
+              break
+            }
+          }
+          array.push([i, yy]);
+          i++;
+          yy--;
+        }
+
+        i = x - 1;
+        yy = y - 1;
+        coincide = false;
+        while(i > 0 && yy > 0 && !coincide){
+          for(let j = 0; j < arrayReynasTablero.length; j++){
+            let aux = arrayReynasTablero[j];
+            if(aux.coordenada_x === i && aux.coordenada_y === yy && (coordenadaReynaArraste[0] !== i || coordenadaReynaArraste[1] !== yy)){
+              coincide = true;
+              existeAtaque = true;
+              break
+            }
+          }
+          array.push([i, yy]);
+          i--;
+          yy--;
+        }
+
+        
+        return {
+          coordenadas: array,
+          existe_ataque: existeAtaque
+        };
     }
 
     verificarSiDisponibleAtaque(x, y, coordenadas){
@@ -124,6 +188,8 @@ class Herramientas{
          });
          return nuevo;
     }
+
+
 }
 
 export default new Herramientas();

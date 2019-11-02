@@ -7,6 +7,7 @@ function Tablero(props) {
   const [coordenadasReynas, setCoordenadasReynas] = useState([]);
   const [coordenadasAtaque, setCoordenadasAtaque] = useState([]);
   const [coordenadaPrevia, setCoordenadaPrevia] = useState([0, 0]);
+  const [existeAtaque, setExisteAtaque] = useState(false);
   const [queen, setQueen] = useState(null);
   const { dragTerminado } = props;
   const functionSetDragTeminado = props.setDragTerminado;
@@ -19,8 +20,21 @@ function Tablero(props) {
   }, [])
   const allowDrop = (ev, x, y) => {
     ev.preventDefault();
-    setCoordenadasAtaque(Herramientas.calcularAtaques(x, y, coordenadasReynas));
+    calcularPosicionAtaque(x, y);
   };
+
+  const calcularPosicionAtaque = (x, y) =>{
+    let resultadoCalculo = Herramientas.calcularAtaques(x, y, coordenadasReynas, coordenadaPrevia);
+    let arrayResultado = resultadoCalculo.coordenadas;
+    let existeAtaque = resultadoCalculo.existe_ataque;
+    setExisteAtaque(existeAtaque);
+    setCoordenadasAtaque(arrayResultado);
+  }
+
+  const noAllowDrop = (e, x, y) => {
+    //e.preventDefault();
+    calcularPosicionAtaque(x, y)
+  }
 
   const drop = (ev, x, y) => {
     ev.preventDefault(); 
@@ -68,6 +82,13 @@ function Tablero(props) {
     return numero;
   }
 
+  const arrastrandoReynaEstablecida = (e, x, y, numeroReyna) =>{
+    e.dataTransfer.setData("arrastreEstablecido", true);
+    e.dataTransfer.setData("numeroReyna", numeroReyna);
+    e.dataTransfer.setDragImage(queen, 0, 0);
+    setCoordenadaPrevia([x, y]);
+  }
+
   const setearValores = () => {
     setCoordenadaPrevia([0, 0]); 
     setCoordenadasAtaque([]);
@@ -85,7 +106,11 @@ function Tablero(props) {
         <div
           key={`${i}${j}`} onDragOver={(e) => { 
             if(!existeReyna || (coordenadaPrevia[0] === x && coordenadaPrevia[1])){
-              allowDrop(e, x, y);
+              if(existeAtaque){
+                noAllowDrop(e, x, y);
+              }else{
+                allowDrop(e, x, y);
+              }
             }else{
               setCoordenadasAtaque([]);
             }
@@ -104,10 +129,7 @@ function Tablero(props) {
               </div>
             : existeReyna && (coordenadaPrevia[0] !== x || coordenadaPrevia[1] !== y) ? 
             <div draggable={true} onDragStart={(e)=>{
-                e.dataTransfer.setData("arrastreEstablecido", true);
-                e.dataTransfer.setData("numeroReyna", numeroReyna);
-                e.dataTransfer.setDragImage(queen, 0, 0);
-                setCoordenadaPrevia([x, y]);
+              arrastrandoReynaEstablecida(e, x, y, numeroReyna);
             }} onDragEnd={()=>{
               setearValores();
             }} className={classnames("", {
