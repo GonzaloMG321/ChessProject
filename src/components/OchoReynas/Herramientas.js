@@ -148,34 +148,14 @@ class Herramientas{
     }
 
     removerReyna(reyna, props, valor){
-        switch (reyna) {
-            case "0":
-              props.setReynas.setReynaUno(valor);
-              break;
-            case "1":
-              props.setReynas.setReynaDos(valor);
-              break;
-            case "2":
-              props.setReynas.setReynaTres(valor);
-              break;
-            case "3":
-              props.setReynas.setReynaCuatro(valor);
-              break;
-            case "4":
-              props.setReynas.setReynaCinco(valor);
-              break;
-            case "5":
-              props.setReynas.setReynaSeis(valor);
-              break;
-            case "6":
-              props.setReynas.setReynaSiete(valor);
-              break;
-            case "7":
-              props.setReynas.setReynaOcho(valor);
-              break;
-            default:
-              break;
+        let nuevo = props.arrayReynasRestantes.map((value) => {
+          if(value.numero === parseInt(reyna)){
+            value.is_draggable = false;
           }
+          return value;
+        });
+
+        props.setArrayReynas(nuevo);
     }
 
     actualizarUbicacionReyna(x, y, numeroReyna, coordenadasActuales = []){
@@ -187,6 +167,23 @@ class Herramientas{
              return reyna;
          });
          return nuevo;
+    }
+
+    getReynasInicio(){
+      let array = [];
+      const INITIAL_DRAGGABLE = true;
+      const REYNA_UNICODE = "\u2655";
+    
+      for(let i = 0; i < 8; i++){
+        let reyna = {
+          is_draggable: INITIAL_DRAGGABLE,
+          reyna_unicode: REYNA_UNICODE,
+          numero: i 
+        }
+        array.push(reyna);
+      }
+
+      return array;
     }
 
 

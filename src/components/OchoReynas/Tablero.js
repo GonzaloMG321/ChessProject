@@ -11,6 +11,9 @@ function Tablero(props) {
   const [queen, setQueen] = useState(null);
   const { dragTerminado } = props;
   const functionSetDragTeminado = props.setDragTerminado;
+  const setReinicio = props.setReinicio;
+  const setRegresarMovimiento = props.setRegresarMovimiento;
+  const setArrayReynas = props.setArrayReynas;
   const tablero = [];
 
   useEffect(() => {
@@ -38,16 +41,32 @@ function Tablero(props) {
 
   const drop = (ev, x, y) => {
     ev.preventDefault(); 
+    const reyna = ev.dataTransfer.getData("setReyna");
     if(ev.dataTransfer.getData("arrastreEstablecido")){
-      const numeroReyna = ev.dataTransfer.getData("numeroReyna");
-      let coordenadasReynasActualizadas = Herramientas.actualizarUbicacionReyna(x, y, parseInt(numeroReyna), coordenadasReynas);
+      let coordenadasReynasActualizadas = Herramientas.actualizarUbicacionReyna(x, y, parseInt(reyna), coordenadasReynas);
       setCoordenadasReynas(coordenadasReynasActualizadas);
-      setCoordenadasAtaque([]);
-      setCoordenadaPrevia([0, 0]);
+      
+
+      let movimiento = {
+        origen: "tablero",
+        reyna:  parseInt(reyna),
+        coord_origen:{
+          coordenada_x: coordenadaPrevia[0],
+          coordenada_y: coordenadaPrevia[1]
+        },
+        destino: {
+          coordenada_x: x,
+          coordenada_y: y
+        }
+      }
+      let historial = props.historialMovimientos;
+      historial.push(movimiento);
+      props.setHistorialMovimientos(historial);
+      setearValores();
     }else if (numeroReynas < 8) {
       setNumeroReynas(numeroReynas + 1);
       let posicionReyna = {
-        numero: numeroReynas,
+        numero: parseInt(reyna),
         coordenada_x: x,
         coordenada_y: y
       };
@@ -55,10 +74,22 @@ function Tablero(props) {
       anteriores.push(posicionReyna);
       setCoordenadasReynas(anteriores);
       let nuevo = { isDraggable: false, reynaUnicode: "" };
-      const reyna = ev.dataTransfer.getData("setReyna");
+      
       Herramientas.removerReyna(reyna, props,nuevo);
+      let movimiento = {
+        origen: "inicio",
+        reyna:  parseInt(reyna),
+        destino: {
+          coordenada_x: x,
+          coordenada_y: y
+        }
+      }
+
+      let historial = props.historialMovimientos;
+      historial.push(movimiento);
+      props.setHistorialMovimientos(historial);
     }else{
-       console.log(coordenadasReynas);
+      
     }
   };
 
@@ -84,7 +115,7 @@ function Tablero(props) {
 
   const arrastrandoReynaEstablecida = (e, x, y, numeroReyna) =>{
     e.dataTransfer.setData("arrastreEstablecido", true);
-    e.dataTransfer.setData("numeroReyna", numeroReyna);
+    e.dataTransfer.setData("setReyna", numeroReyna);
     e.dataTransfer.setDragImage(queen, 0, 0);
     setCoordenadaPrevia([x, y]);
   }
@@ -93,6 +124,7 @@ function Tablero(props) {
     setCoordenadaPrevia([0, 0]); 
     setCoordenadasAtaque([]);
   }
+
 
   for (var i = 7; i >= 0; i--) {
     let fila = [];
@@ -156,6 +188,51 @@ function Tablero(props) {
       functionSetDragTeminado(false);
     }
   }, [dragTerminado, functionSetDragTeminado])
+
+  useEffect(() =>{
+    if(props.reinicio){
+      setCoordenadasReynas([]);
+      setNumeroReynas(0);
+      setCoordenadasAtaque([]);
+      setearValores();
+      setReinicio(false);
+    }
+  }, [props.reinicio, setReinicio])
+
+  useEffect(() =>{
+    if(props.regresarMovimiento){
+      if(props.historialMovimientos.length > 0){
+        let ultimo = props.historialMovimientos.pop();
+        if(ultimo.origen === "tablero"){
+          let aux = coordenadasReynas.map(value =>{
+            if(ultimo.reyna === value.numero){
+              value.coordenada_x = ultimo.coord_origen.coordenada_x;
+              value.coordenada_y = ultimo.coord_origen.coordenada_y;
+            }
+
+            return value;
+          })
+          setCoordenadasReynas(aux);
+        }else{
+          let restantes = props.arrayReynasRestantes.map((valor) =>{
+            if(valor.numero === ultimo.reyna){
+              valor.is_draggable = true
+            }
+            return valor;
+          });
+          setNumeroReynas(numeroReynas - 1);
+          setArrayReynas(restantes);
+          let aux = coordenadasReynas.filter((reyna) =>{
+            return reyna.numero !== ultimo.reyna
+          })
+          setCoordenadasReynas(aux);
+        }
+      }
+      
+      //setRegresarMovimiento()
+      setRegresarMovimiento(false);
+    }
+  }, [props.regresarMovimiento, setRegresarMovimiento, props.historialMovimientos, props.arrayReynasRestantes, setArrayReynas, coordenadasReynas, numeroReynas]);
   return <React.Fragment>{tablero}</React.Fragment>;
 }
 
