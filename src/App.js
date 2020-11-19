@@ -6,7 +6,7 @@ import RecorridoCaballo from './components/RecorridoCaballo/RecorridoCaballo';
 import OchoReynas from './components/OchoReynas/OchoReynas';
 
 function App() {
-  const [seleccionado, setSeleccionado] = useState("2");
+  const [seleccionado, setSeleccionado] = useState("1");
 
   return (
     <div className="contenedor-principal">
